@@ -3,11 +3,11 @@ let duraciones = [];
 let spliter = [];
 let duracionesSpliteadas = [];
 let numerosSpliteados = [];
-let minutos = [];
-let segundos = [];
-let indexDeMinutosIguales = []
-let vueltaRapida
-let vueltaLenta
+let duracionEnSegundos = [];
+let vueltaMasRapidaEnSegundos
+let indexVueltaMasRapida
+let vueltaMasLentaEnSegundos
+let indexVueltaMasLenta
 
 function NuevaVuelta(nroVueltaValor, durationValor, circuitoKm){
     vueltas.push({nroVuelta: nroVueltaValor, duracion: durationValor, circuito: circuitoKm + "Km"})
@@ -21,16 +21,16 @@ function velocidadMedia(velocidadMax, velocidadMin, distancia){
 let extensionKm = prompt("Ingresa la extension en Km tiene del circuito recorrido")
 let extensionKmN = Number(extensionKm)
 
-let cantidad = prompt("Ingresa la cantidad de vueltas que deseas registrar")
-let cantidadN = Number(cantidad)
+let cantidadDeVueltas = prompt("Ingresa la cantidad de vueltas que deseas registrar")
+let cantidadDeVueltasN = Number(cantidadDeVueltas)
 
 
-while(cantidadN > 0){
+while(cantidadDeVueltasN > 0){
     let nroVuelta = prompt("Ingresa el Nro de la vuelta a ingresar")
     let nroVueltaN = Number(nroVuelta)
     let duration = prompt("Ingresa el tiempo de la vuelta")
     NuevaVuelta(nroVueltaN, duration, extensionKmN)
-    cantidadN -= 1
+    cantidadDeVueltasN -= 1
 }
 
 duraciones = vueltas.map(function(vuelta){
@@ -52,58 +52,42 @@ function integerSplit(){
     }
 }
 
-function minutosDeVueltas(){
+function convertirLasDuracionesASegundos(){
     for(let i = 0; i < numerosSpliteados.length; i += 2){
-        minutos.push(numerosSpliteados[i])
+        duracionEnSegundos.push(numerosSpliteados[i] * 60)
     }
-}
-
-function segundosDeVueltas(){
-    for(let i = 1; i < numerosSpliteados.length; i += 2){
-        segundos.push(numerosSpliteados[i])
+    let i = 0
+    for(let j = 0; j < duracionEnSegundos.length; j++){
+        duracionEnSegundos[j] += numerosSpliteados[i + 1]
+        i += 2
     }
 }
 
 function vueltaMasRapida(){
-    if (comprobadorDeTiemposIguales() == true){
-        Math.min(segundos[indexDeMinutosIguales])
-    }
+    vueltaMasRapidaEnSegundos = Math.min.apply(null, duracionEnSegundos)
+    indexVueltaMasRapida = duracionEnSegundos.indexOf(vueltaMasRapidaEnSegundos)
+    console.log("Vuelta echa en menor tiempo: ")
+    console.log(vueltas[indexVueltaMasRapida])
 }
 
+function vueltaMasLenta(){
+    vueltaMasLentaEnSegundos = Math.max.apply(null, duracionEnSegundos)
+    indexVueltaMasLenta = duracionEnSegundos.indexOf(vueltaMasLentaEnSegundos)
+    console.log("Vuelta echa en mayor tiempo: ")
+    console.log(vueltas[indexVueltaMasLenta])
+}
 
-
-function comprobadorDeTiemposIguales(){
-    for (let i = 0; i < minutos.length; i++) {
-        for (let j = 1; j < minutos.length; j++) {
-            if (minutos[i] === minutos[j]) {
-              if (segundos[i] === segundos[j]){
-                  console.log(vueltas[i])
-                  console.log(vueltas[j])
-              } else {
-                indexDeMinutosIguales.push(i)
-                indexDeMinutosIguales.push(j)
-                return true
-              }
-            } else {
-                return false
-            }
-        }
-    }
+function velocidadMedia(){
+    let velocidadMediaEnMxS = ((extensionKmN * 1000) / (vueltaMasLentaEnSegundos - vueltaMasRapidaEnSegundos))
+    console.log("Velocidad media: " + velocidadMediaEnMxS + "m/s")
 }
 
 spliteador()
 integerSplit()
-minutosDeVueltas()
-segundosDeVueltas()
-
-
-// let vueltaMasRapida = Math.min((duraciones);
-// console.log(vueltaMasRapida);
-
-// let vueltaMasLenta = Math.max(duraciones);
-// console.log(vueltaMasLenta);
-
-// velocidadMedia(vueltaMasRapida, vueltaMasLenta, extensionKmN);
+convertirLasDuracionesASegundos()
+vueltaMasRapida()
+vueltaMasLenta()
+velocidadMedia()
 
 
 
